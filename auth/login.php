@@ -1,4 +1,5 @@
 <?php
+<<<<<<< HEAD
 require "../config/db.php";
 
 if(isset($_POST['login'])){
@@ -17,10 +18,38 @@ if(isset($_POST['login'])){
             exit;
         } else $error="Invalid password";
     } else $error="Email not found";
+=======
+session_start();
+require_once "../config/db.php";
+
+if (isset($_POST['login'])) {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+
+    $stmt = $conn->prepare("SELECT * FROM users WHERE email=?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $res = $stmt->get_result();
+    $user = $res->fetch_assoc();
+
+    if ($user && password_verify($password, $user['password'])) {
+        $_SESSION['user'] = $user;
+        // Redirect based on role
+        switch($user['role']){
+            case 'adviser': header("Location: ../adviser_dashboard.php"); break;
+            case 'student': header("Location: ../student_dashboard.php"); break;
+            case 'admin': header("Location: ../admin_dashboard.php"); break;
+        }
+        exit;
+    } else {
+        $error = "Invalid credentials!";
+    }
+>>>>>>> 352e25f (upload)
 }
 ?>
 
 <!DOCTYPE html>
+<<<<<<< HEAD
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -64,5 +93,24 @@ if(isset($_POST['login'])){
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+=======
+<html>
+<head>
+<title>Login</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5" style="max-width: 400px;">
+    <h3>Login</h3>
+    <?php if(isset($error)): ?>
+        <div class="alert alert-danger"><?= $error ?></div>
+    <?php endif; ?>
+    <form method="post">
+        <div class="mb-3"><label>Email</label><input type="email" name="email" class="form-control" required></div>
+        <div class="mb-3"><label>Password</label><input type="password" name="password" class="form-control" required></div>
+        <button type="submit" name="login" class="btn btn-primary">Login</button>
+    </form>
+</div>
+>>>>>>> 352e25f (upload)
 </body>
 </html>

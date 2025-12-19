@@ -1,4 +1,5 @@
 <?php
+<<<<<<< HEAD
 require "../config/db.php";
 
 $profileDir = "../uploads/profiles/";
@@ -100,3 +101,40 @@ if(isset($_POST['register'])){
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+=======
+require_once __DIR__ . "/../config/db.php";
+
+// Get POST data
+$name     = trim($_POST['name']);
+$email    = trim($_POST['email']);
+$role     = $_POST['role'];
+$password = $_POST['password'];
+$confirm  = $_POST['confirm'];
+
+// Validate passwords
+if ($password !== $confirm) {
+    die("Passwords do not match");
+}
+
+// Check if email already exists
+$check = $conn->prepare("SELECT id FROM users WHERE email = ?");
+$check->bind_param("s", $email);
+$check->execute();
+$check->store_result();
+if ($check->num_rows > 0) {
+    die("Email already registered");
+}
+
+// Hash password
+$hashed = password_hash($password, PASSWORD_DEFAULT);
+
+// Insert user into database
+$stmt = $conn->prepare("INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)");
+$stmt->bind_param("ssss", $name, $email, $hashed, $role);
+$stmt->execute();
+
+// Redirect back to register page with success query
+header("Location: ../register.php?success=1&email=" . urlencode($email));
+exit;
+
+>>>>>>> 352e25f (upload)
